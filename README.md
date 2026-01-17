@@ -8,13 +8,13 @@ Clone the repository and run the following command:
 
 ```bash
 git clone https://github.com/stellarrounin-labs/github-activity
-cd githuh-activity
+cd github-activity
 ```
 
 Run the following command to build and run the project:
 
 ```bash
 go build -o github-activity
-# ./githuh-activity username
+# ./github-activity username
 ./github-activity stellarrounin
 ```
