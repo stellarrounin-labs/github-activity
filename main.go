@@ -7,20 +7,20 @@ import (
 )
 
 type Event struct {
-	Id      string  `json:id`
-	Type    string  `json:type`
-	Repo    Repo    `json:repo`
-	Payload Payload `json:payload`
+	ID      string  `json:"id"`
+	Type    string  `json:"type"`
+	Repo    Repo    `json:"repo"`
+	Payload Payload `json:"payload"`
 }
 
 type Repo struct {
-	Id   int    `json:id`
-	Name string `json:name`
+	ID   int    `json:"id"`
+	Name string `json:"name"`
 }
 
 type Payload struct {
-	Action      string `json:action`
-	Description string `json:description`
+	Action      string `json:"action"`
+	Description string `json:"description"`
 }
 
 func main() {
@@ -28,14 +28,18 @@ func main() {
 
 	resp, err := client.Get("https://api.github.com/users/folke/events")
 	if err != nil {
-		panic(err)
+		fmt.Printf("=== An error has occurred ===\n%s", err)
+		return
 	}
-	defer resp.Body.Close()
+
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 
 	var userEvents []Event
 	err = json.NewDecoder(resp.Body).Decode(&userEvents)
 	if err != nil {
-		fmt.Println("Read error: ", err)
+		fmt.Print("=== ERROR ===\nUser not found")
 		return
 	}
 
@@ -44,7 +48,7 @@ func main() {
 
 		switch event.Type {
 		case "IssuesEvent":
-			fmt.Printf("%s an issue in repo %s/n", event.Payload.Action, event.Repo.Name)
+			fmt.Printf("%s an issue in repo %s\n", event.Payload.Action, event.Repo.Name)
 		case "WatchEvent":
 			fmt.Printf("starred repo %s\n", event.Repo.Name)
 		case "IssueCommentEvent":
