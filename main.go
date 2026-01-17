@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
 )
 
 type Event struct {
@@ -24,9 +25,18 @@ type Payload struct {
 }
 
 func main() {
+	username := os.Args[1]
+
+	if username == "" {
+		fmt.Print("Username not provided")
+		return
+	}
+
+	requestUrl := fmt.Sprintf("https://api.github.com/users/%s/events", username)
+
 	client := &http.Client{}
 
-	resp, err := client.Get("https://api.github.com/users/folke/events")
+	resp, err := client.Get(requestUrl)
 	if err != nil {
 		fmt.Printf("=== An error has occurred ===\n%s", err)
 		return
@@ -39,7 +49,7 @@ func main() {
 	var userEvents []Event
 	err = json.NewDecoder(resp.Body).Decode(&userEvents)
 	if err != nil {
-		fmt.Print("=== ERROR ===\nUser not found")
+		fmt.Printf("=== ERROR ===\nUser %s not found", username)
 		return
 	}
 
